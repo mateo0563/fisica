@@ -10,7 +10,7 @@ alto_pantalla = 900
 fps = 30
 
 pantalla = pygame.display.set_mode((ancho_pantalla, alto_pantalla), pygame.RESIZABLE)
-pygame.display.set_caption("Simulación ley de Newton")
+pygame.display.set_caption("Simulación leyes de Newton")
 
 COLOR_CIELO_DIA = (135, 206, 235)
 COLOR_CIELO_CREPU = (50, 100, 160)
@@ -140,20 +140,6 @@ class Cohete:
             except Exception:
                 break
 
-        # Si no hay frames, intentar cargar fuego.png
-        if not self.img_impulso_frames:
-            try:
-                single = pygame.image.load("fuego.png").convert_alpha()
-                self.img_impulso_frames = [single]
-            except Exception:
-                self.img_impulso_frames = []  # no hay imagen de impulso
-
-        # parámetros de animación
-        self.impulso_anim_speed = 10.0   # frames por segundo (si hay múltiples)
-        self.impulso_pulse_speed = 8.0   # frecuencia de pulsación si solo hay 1 frame
-        self.impulso_pulse_amp = 0.12    # amplitud de la pulsación de escala
-
-        
     def reiniciar(self):
         self.x = ancho_pantalla // 4
         self.y = self.y = alto_pantalla - 80 - alto_cohete
@@ -256,8 +242,6 @@ class Cohete:
     def dibujar(self, pantalla, cam_y):
         x_d = self.x + self.shake_x
         y_d = (self.y - cam_y) + self.shake_y
-
-        # Si está fuera de pantalla, cortamos temprano
         if y_d < -alto_cohete*2 or y_d > alto_pantalla + alto_cohete*2:
             return
 
@@ -617,17 +601,17 @@ def main():
         pygame.draw.rect(hud, COLOR_TEXTO_HUD, (0,0,ancho_hud,hud_alto), 2)
 
         y_text = 5
-        titulo = fuente_titulo.render("Simulación ley de Newton", True, COLOR_TEXTO_HUD)
+        titulo = fuente_titulo.render("Simulación leyes de Newton", True, COLOR_TEXTO_HUD)
         hud.blit(titulo, (5, y_text))
         y_text += 25
 
         metricas = [
             f"Tiempo: {cohete.tiempo_total:.1f} s",
-            #f"Altitud: {(cohete.altura/1000):.3f} km",
-            f"Velocidad: {abs(cohete.vel_y):.2f} m/s ({abs(cohete.vel_y/1000):.3f} km/min)",
+            #f"Altitud: {(cohete.altura/1000):.3f} km",cohete.Cambio_de_velocidad_max
+            f"Velocidad: {abs(cohete.vel_y):.2f} m/s ({abs(cohete.vel_y*3.6):.3f} km/h)",
             f"Aceleración: {cohete.acel:.2f} m/s²",
             f"Empuje: {cohete.fuerza:.0f} N",
-            f"Cambio de velocidad:: {cohete.Cambio_de_velocidad/1000:.3f} km/min (Máx: {cohete.Cambio_de_velocidad_max/1000:.3f} km/min)",
+            f"Cambio de velocidad:: {cohete.Cambio_de_velocidad*3.6 :.3f} km/h (Máx: {cohete.Cambio_de_velocidad_max*3.6:.3f} km/h)",
             f"Masa Actual: {cohete.masa_sin_combustible + cohete.comb_actual:.0f} kg",
             f"Combustible Restante: {cohete.comb_actual:.0f} kg ({cohete.comb_actual / cohete.masa_comb * 100:.1f}%)",
             f"Auto-Pausa: {cohete.pausa_auto:.1f} s" if cohete.pausa_auto > 0 else "Auto-Pausa: Desactivada",
@@ -686,7 +670,7 @@ def main():
                 f"Consumo masa: {cohete.consum_masa:.1f} kg/s",
                 f"Auto-pausa: {cohete.pausa_auto:.1f} s" if cohete.pausa_auto > 0 else "Auto-pausa: Desactivada",
                 f"Empuje: {cohete.fuerza:.0f} N",
-                f"Cambio máximo de velocidad: {cohete.Cambio_de_velocidad_max / 1000:.2f} km/min"
+                f"Cambio máximo de velocidad: {cohete.Cambio_de_velocidad_max * 3.6 :.2f} km/h"
             ]
             for val in valores:
                 surf = fuente_texto.render(val, True, COLOR_INFORME_HUD)
